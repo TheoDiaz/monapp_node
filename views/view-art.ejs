@@ -16,14 +16,21 @@
             </ul>
         </nav>
     </header>
-    <div class="container">
-        <h1><%= article.name %></h1>
-        <div class="article-details">
-            <img src="<%= article.image %>" alt="<%= article.name %>" style="width: 300px; height: 300px;">
-            <p>Code Article: <%= article.codeArticle %></p>
-            <p>Description: <%= article.description %></p>
-            <p>Prix: <%= article.price %> €</p>
-            <p>Quantité disponible: <%= article.quantity %></p>
+    <div class="container-product">
+        <div class="product">
+            <div class="product-image">
+                <img src="<%= article.image %>" alt="<%= article.name %>">
+            </div>
+            <div class="product-details">
+                <h1><%= article.name %></h1>
+                <p class="product-code">Code Article: <%= article.codeArticle %></p>
+                <p class="product-description"><%= article.description %></p>
+                <p class="product-price">Prix: <%= article.price %> €</p>
+                <p class="product-quantity">Quantité disponible: <%= article.quantity %></p>
+                <p class="product-release-date">Date de sortie: <%= article.releaseDate.toDateString() %></p>
+                <p class="product-platforms">Plateformes: <%= article.platforms.join(', ') %></p>
+                <p class="product-genres">Genres: <%= article.genres.join(', ') %></p>
+            </div>
         </div>
     </div>
     <footer class="footer">

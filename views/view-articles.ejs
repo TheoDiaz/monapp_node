@@ -16,24 +16,41 @@
             </ul>
         </nav>
     </header>
-            <div class="container">
-                <h1>Articles Disponibles</h1>
-                <div class="articles-list">
-                    <% articles.forEach(article => { %>
-                        <div class="article">
-                            <img src="<%= article.image %>" alt="<%= article.name %>">
-                            <a href="/articles/article/<%= article.id %>">
-                                <h2><%= article.name %></h2>
-                            </a>
-                            <p class="description"><%= article.description %></p>
-                            <p class="price"><%= article.price %> €</p>
-                            <p>Quantité disponible: <%= article.quantity %></p>
-                        </div>
-                    <% }); %>
+    <div class="container">
+        <h1>Articles Disponibles</h1>
+        <div class="articles-list">
+            <% articles.forEach(article => { %>
+                <div class="article">
+                    <div class="image-container">
+                        <img src="<%= article.image %>" alt="<%= article.name %>">
+                    </div>
+                    <a href="/articles/article/<%= article.id %>">
+                        <h2><%= article.name %></h2>
+                    </a>
+                    <p class="description" id="desc-<%= article.id %>"><%= article.description %></p>
+                    <p class="price"><%= article.price %> €</p>
+                    <p>Quantité disponible: <%= article.quantity %></p>
                 </div>
-            </div>
+            <% }); %>
+        </div>
+    </div>
     <footer class="footer">
         <p>© 2024 Theoinc</p>
     </footer>
+
+    <script>
+        function toggleDescription(id) {
+            const desc = document.getElementById(`desc-${id}`);
+            const readMore = desc.nextElementSibling;
+            
+            if (desc.classList.contains('expanded')) {
+                desc.classList.remove('expanded');
+                readMore.textContent = 'Voir plus';
+            } else {
+                desc.classList.add('expanded');
+                readMore.textContent = 'Voir moins';
+            }
+        }
+    </script>
 </body>
 </html>

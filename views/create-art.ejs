@@ -1,4 +1,3 @@
-<!-- views/create-art.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,14 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/articles">Accueil</a></li>
+                <li><a href="/users/logout">Se déconnecter</a></li>
+            </ul>
+        </nav>
+    </header>
     <div class="page-content">
         <div class="search-section">
             <input type="text" id="gameSearch" placeholder="Search for a game">
@@ -35,6 +42,15 @@
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" required>
 
+                    <label for="releaseDate">Date de sortie:</label>
+                    <input type="date" id="releaseDate" name="releaseDate" required>
+
+                    <label for="platforms">Plateformes (séparées par des virgules):</label>
+                    <input type="text" id="platforms" name="platforms" required>
+
+                    <label for="genres">Genres (séparés par des virgules):</label>
+                    <input type="text" id="genres" name="genres" required>
+
                     <label for="imageType">Image Type:</label>
                     <select id="imageType" name="imageType" required>
                         <option value="file">File</option>
@@ -58,51 +74,86 @@
     </div>
 
     <script>
-    document.getElementById('imageType').addEventListener('change', function() {
-        const fileInput = document.getElementById('fileInput');
-        const urlInput = document.getElementById('urlInput');
-        if (this.value === 'file') {
-            fileInput.style.display = 'block';
-            urlInput.style.display = 'none';
-        } else {
-            fileInput.style.display = 'none';
-            urlInput.style.display = 'block';
-        }
-    });
-
-    async function searchGames() {
-        const query = document.getElementById('gameSearch').value;
-        const response = await fetch(`/articles/search-games?q=${encodeURIComponent(query)}`);
-        const games = await response.json();
-        
-        const resultsDiv = document.getElementById('searchResults');
-        resultsDiv.innerHTML = '';
-        
-        games.forEach(game => {
-            const gameDiv = document.createElement('div');
-            gameDiv.className = 'game-card';
-            gameDiv.innerHTML = `
-                <img src="${game.cover ? game.cover.url.replace('t_thumb', 't_cover_big') : '/public/images/defaut.png'}" alt="${game.name}">
-                <h3>${game.name}</h3>
-                <button type="button" onclick="fillForm('${game.name}', '${game.summary || ''}', '${game.cover ? game.cover.url : '/path/to/default/image.jpg'}')">Use This Game</button>
-            `;
-            resultsDiv.appendChild(gameDiv);
+        document.getElementById('imageType').addEventListener('change', function() {
+            const fileInput = document.getElementById('fileInput');
+            const urlInput = document.getElementById('urlInput');
+            if (this.value === 'file') {
+                fileInput.style.display = 'block';
+                urlInput.style.display = 'none';
+            } else {
+                fileInput.style.display = 'none';
+                urlInput.style.display = 'block';
+            }
         });
-    }
 
-    function fillForm(name, summary, imageUrl) {
-        document.getElementById('name').value = name;
-        document.getElementById('description').value = summary;
-        document.getElementById('imageType').value = 'url'; // Choisir 'url' par défaut
-        document.getElementById('imageUrl').value = imageUrl; // Remplir le champ d'URL avec l'image du jeu
+        async function searchGames() {
+            const query = document.getElementById('gameSearch').value;
+            const response = await fetch(`/articles/search-games?q=${encodeURIComponent(query)}`);
+            const games = await response.json();
+            
+            console.log('Games received:', games); // Pour déboguer
 
-        // Afficher le champ d'URL et masquer le champ de fichier
-        document.getElementById('urlInput').style.display = 'block';
-        document.getElementById('fileInput').style.display = 'none';
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '';
+            
+            games.forEach(game => {
+                const gameDiv = document.createElement('div');
+                gameDiv.className = 'game-card';
+                
+                // Utilisez directement l'URL de l'image fournie par l'API
+                const coverUrl = game.cover;
+                
+                console.log('URL de couverture utilisée:', coverUrl); // Pour déboguer
 
-        // Faire défiler la page vers le formulaire
-        document.querySelector('.container-form').scrollIntoView({ behavior: 'smooth' });
-    }
+                // Créez un bouton avec des attributs de données
+                const button = document.createElement('button');
+                button.textContent = 'Use This Game';
+                button.type = 'button';
+                
+                // Ajoutez des attributs de données pour stocker les informations du jeu
+                button.setAttribute('data-name', game.name);
+                button.setAttribute('data-summary', game.summary || '');
+                button.setAttribute('data-cover', coverUrl);
+                button.setAttribute('data-release-date', game.releaseDate || '');
+                button.setAttribute('data-platforms', game.platforms ? game.platforms.join(', ') : '');
+                button.setAttribute('data-genres', game.genres ? game.genres.join(', ') : '');
+                
+                // Ajoutez un écouteur d'événements pour le clic
+                button.addEventListener('click', function() {
+                    fillForm(
+                        this.getAttribute('data-name'),
+                        this.getAttribute('data-summary'),
+                        this.getAttribute('data-cover'),
+                        this.getAttribute('data-release-date'),
+                        this.getAttribute('data-platforms'),
+                        this.getAttribute('data-genres')
+                    );
+                });
+
+                gameDiv.innerHTML = `
+                    <img src="${coverUrl}" alt="${game.name}" onerror="this.src='/images/default.png';">
+                    <h3>${game.name}</h3>
+                `;
+                gameDiv.appendChild(button);
+                resultsDiv.appendChild(gameDiv);
+            });
+        }
+        
+        function fillForm(name, summary, imageUrl, releaseDate, platforms, genres) {
+            console.log('Données reçues dans fillForm:', { name, summary, imageUrl, releaseDate, platforms, genres }); // Pour déboguer
+            document.getElementById('name').value = name;
+            document.getElementById('description').value = summary;
+            document.getElementById('imageType').value = 'url';
+            document.getElementById('imageUrl').value = imageUrl;
+            document.getElementById('releaseDate').value = releaseDate;
+            document.getElementById('platforms').value = platforms;
+            document.getElementById('genres').value = genres;
+
+            document.getElementById('urlInput').style.display = 'block';
+            document.getElementById('fileInput').style.display = 'none';
+
+            document.querySelector('.container-form').scrollIntoView({ behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>

@@ -31,7 +31,7 @@ exports.getCreateArticlePage = (req, res) => {
 
 exports.createArticle = async (req, res) => {
     try {
-        const { name, codeArticle, description, price, quantity, imageType, imageUrl } = req.body;
+        const { name, codeArticle, description, price, quantity, imageType, imageUrl, releaseDate, platforms, genres } = req.body;
         let imagePath;
 
         if (imageType === 'file' && req.file) {
@@ -48,7 +48,10 @@ exports.createArticle = async (req, res) => {
             description,
             image: imagePath,
             price: parseFloat(price),
-            quantity: parseInt(quantity)
+            quantity: parseInt(quantity),
+            releaseDate: new Date(releaseDate),
+            platforms: platforms.split(',').map(p => p.trim()),
+            genres: genres.split(',').map(g => g.trim())
         };
 
         await ArticleService.createArticle(articleData);
