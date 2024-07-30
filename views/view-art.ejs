@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= article.name %></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/create-art">Créer un article</a></li>
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/logout">Se déconnecter</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <h1><%= article.name %></h1>
+        <div class="article-details">
+            <img src="<%= article.image %>" alt="<%= article.name %>" style="width: 300px; height: 300px;">
+            <p>Code Article: <%= article.codeArticle %></p>
+            <p>Description: <%= article.description %></p>
+            <p>Prix: <%= article.price %> €</p>
+            <p>Quantité disponible: <%= article.quantity %></p>
+        </div>
+    </div>
+    <footer class="footer">
+        <p>© 2024 Theoinc</p>
+    </footer>
+</body>
+</html>

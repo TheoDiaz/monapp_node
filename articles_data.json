@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Sonic",
+    "codeArticle": "A001",
+    "description": "Description de l'article 1",
+    "image": "/images/sonic.jpg",
+    "price": 50,
+    "quantity": 10
+  },
+  {
+    "id": 2,
+    "name": "God of War - Ragnarock",
+    "codeArticle": "A002",
+    "description": "Description de l'article 2",
+    "image": "/images/god-ragna.jpg",
+    "price": 70,
+    "quantity": 5
+  },
+  {
+    "id": 3,
+    "name": "FC 24",
+    "codeArticle": "12568",
+    "description": "EA SPORTS FC 24 Standard Edition PS5",
+    "image": "/images/fc24.jpg",
+    "price": 48,
+    "quantity": 25
+  },
+  {
+    "id": 4,
+    "name": "UFC 25",
+    "codeArticle": "5496252",
+    "description": "EA SPORTS UFC 5 Standard Edition PS5 | Jeu Vidéo | Français",
+    "image": "/images/ufc25.jpg",
+    "price": 64,
+    "quantity": 150
+  },
+  {
+    "id": 5,
+    "name": "GTA 5",
+    "codeArticle": "46548",
+    "description": "GTA V - Play Station 5 | Grand Theft Auto V",
+    "image": "/images/gta5.jpg",
+    "price": 50,
+    "quantity": 3
+  }
+]
