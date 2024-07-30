@@ -10,16 +10,16 @@
     <header>
         <nav>
             <ul>
-                <li><a href="/create-art">Créer un article</a></li>
-                <li><a href="/">Accueil</a></li>
-                <li><a href="/logout">Se déconnecter</a></li>
+                <li><a href="/articles/create-art">Créer un article</a></li>
+                <li><a href="/articles">Accueil</a></li>
+                <li><a href="/users/logout">Se déconnecter</a></li>
             </ul>
         </nav>
     </header>
     <div class="form-wrapper">
         <div class="container-form">
             <h1>Créer un Nouvel Article</h1>
-            <form action="/create-art" method="POST" enctype="multipart/form-data">
+            <form action="/articles/create-art" method="POST" enctype="multipart/form-data">
                 <label for="name">Nom de l'article</label>
                 <input type="text" id="name" name="name" required>
                 
