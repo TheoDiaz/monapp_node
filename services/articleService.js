@@ -1,4 +1,5 @@
 const Article = require('../models/Article');
+const logger = require('../logger');
 
 class ArticleService {
     async getAllArticles() {
@@ -10,8 +11,16 @@ class ArticleService {
     }
 
     async createArticle(articleData) {
-        const newArticle = new Article(articleData);
-        return await newArticle.save();
+        logger.info('Attempting to create article:', articleData);
+        try {
+            const newArticle = new Article(articleData);
+            const savedArticle = await newArticle.save();
+            logger.info('Article created successfully:', savedArticle);
+            return savedArticle;
+        } catch (error) {
+            logger.error('Error creating article:', error);
+            throw error;
+        }
     }
 
     async updateArticle(id, updateData) {

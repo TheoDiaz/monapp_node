@@ -14,6 +14,9 @@ router.get('/article/:id', requireLogin, articleController.getArticleById);
 router.get('/create-art', requireLogin, articleController.getCreateArticlePage);
 
 // Route pour créer un nouvel article
-router.post('/create-art', requireLogin, upload.single('imageFile'), articleController.createArticle);
+router.post('/', requireLogin, upload.single('imageFile'), articleController.createArticle);
+
+// Route pour avoir les infos IGBD
+router.get('/search-games', requireLogin, articleController.searchGames);
 
 module.exports = router;

@@ -7,6 +7,9 @@ const logger = require('./logger'); // Importer le logger
 const morgan = require('morgan');
 const userRoutes = require('./routes/userRoutes'); // Importer les routes utilisateurs
 const articleRoutes = require('./routes/articleRoutes'); // Importer les routes articles
+const igdbService = require('./services/igdbService'); // Importer le service IGDB
+const https = require('https');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -26,7 +29,7 @@ app.use(session({
 }));
 
 // Servir les fichiers statiques
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Définir EJS comme moteur de templates
 app.set('view engine', 'ejs');
@@ -48,7 +51,19 @@ app.get('/', (req, res) => {
     res.redirect('/articles'); // Rediriger vers la page des articles
 });
 
-// Démarrer le serveur
-app.listen(PORT, () => {
-    logger.info(`Server is running on http://localhost:${PORT}`);
-});
+// Initialiser le service IGDB et démarrer le serveur
+(async () => {
+    try {
+        await igdbService.initializeIGDB();
+        const options = {
+            key: fs.readFileSync('server.key'),
+            cert: fs.readFileSync('server.cert')
+        };
+        https.createServer(options, app).listen(PORT, () => {
+            logger.info(`Server is running on https://localhost:${PORT}`);
+        });
+    } catch (error) {
+        logger.error('Failed to initialize IGDB service', error);
+        process.exit(1); // Arrêter le processus si l'initialisation échoue
+    }
+})();

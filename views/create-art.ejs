@@ -1,69 +1,108 @@
+<!-- views/create-art.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un Article</title>
+    <title>Create New Article</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="/articles/create-art">Créer un article</a></li>
-                <li><a href="/articles">Accueil</a></li>
-                <li><a href="/users/logout">Se déconnecter</a></li>
-            </ul>
-        </nav>
-    </header>
-    <div class="form-wrapper">
-        <div class="container-form">
-            <h1>Créer un Nouvel Article</h1>
-            <form action="/articles/create-art" method="POST" enctype="multipart/form-data">
-                <label for="name">Nom de l'article</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="codeArticle">Code Article</label>
-                <input type="text" id="codeArticle" name="codeArticle" required>
-                
-                <label for="description">Description</label>
-                <textarea id="description" name="description" required></textarea>
-                
-                <label for="imageType">Type d'image</label>
-                <select id="imageType" name="imageType">
-                    <option value="url">URL</option>
-                    <option value="file">Fichier local</option>
-                </select>
-                
-                <div id="urlInput">
-                    <label for="imageUrl">URL de l'image</label>
-                    <input type="text" id="imageUrl" name="imageUrl" value="/images/">
-                </div>
-                
-                <div id="fileInput" style="display:none;">
-                    <label for="imageFile">Fichier image</label>
-                    <input type="file" id="imageFile" name="imageFile" accept="image/*">
-                </div>
-                
-                <label for="price">Prix</label>
-                <input type="number" step="0.01" id="price" name="price" required>
-                
-                <label for="quantity">Quantité</label>
-                <input type="number" id="quantity" name="quantity" required>
-                
-                <button type="submit">Ajouter l'article</button>
-            </form>
+    <div class="page-content">
+        <div class="search-section">
+            <input type="text" id="gameSearch" placeholder="Search for a game">
+            <button type="button" onclick="searchGames()">Search</button>
+        </div>
+
+        <div id="searchResults"></div>
+
+        <div class="form-wrapper">
+            <div class="container-form">
+                <h1>Create New Article</h1>
+                <form action="/articles" method="POST" enctype="multipart/form-data">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="codeArticle">Code Article:</label>
+                    <input type="text" id="codeArticle" name="codeArticle" required>
+
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required></textarea>
+
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" name="price" step="0.01" required>
+
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" required>
+
+                    <label for="imageType">Image Type:</label>
+                    <select id="imageType" name="imageType" required>
+                        <option value="file">File</option>
+                        <option value="url">URL</option>
+                    </select>
+
+                    <div id="fileInput" style="display: none;">
+                        <label for="imageFile">Image File:</label>
+                        <input type="file" id="imageFile" name="imageFile">
+                    </div>
+
+                    <div id="urlInput" style="display: none;">
+                        <label for="imageUrl">Image URL:</label>
+                        <input type="text" id="imageUrl" name="imageUrl">
+                    </div>
+
+                    <button type="submit">Create Article</button>
+                </form>
+            </div>
         </div>
     </div>
-    <footer class="footer">
-        <p>© 2024 Theoinc</p>
-    </footer>
 
     <script>
-        document.getElementById('imageType').addEventListener('change', function() {
-            document.getElementById('urlInput').style.display = this.value === 'url' ? 'block' : 'none';
-            document.getElementById('fileInput').style.display = this.value === 'file' ? 'block' : 'none';
+    document.getElementById('imageType').addEventListener('change', function() {
+        const fileInput = document.getElementById('fileInput');
+        const urlInput = document.getElementById('urlInput');
+        if (this.value === 'file') {
+            fileInput.style.display = 'block';
+            urlInput.style.display = 'none';
+        } else {
+            fileInput.style.display = 'none';
+            urlInput.style.display = 'block';
+        }
+    });
+
+    async function searchGames() {
+        const query = document.getElementById('gameSearch').value;
+        const response = await fetch(`/articles/search-games?q=${encodeURIComponent(query)}`);
+        const games = await response.json();
+        
+        const resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = '';
+        
+        games.forEach(game => {
+            const gameDiv = document.createElement('div');
+            gameDiv.className = 'game-card';
+            gameDiv.innerHTML = `
+                <img src="${game.cover ? game.cover.url.replace('t_thumb', 't_cover_big') : '/public/images/defaut.png'}" alt="${game.name}">
+                <h3>${game.name}</h3>
+                <button type="button" onclick="fillForm('${game.name}', '${game.summary || ''}', '${game.cover ? game.cover.url : '/path/to/default/image.jpg'}')">Use This Game</button>
+            `;
+            resultsDiv.appendChild(gameDiv);
         });
+    }
+
+    function fillForm(name, summary, imageUrl) {
+        document.getElementById('name').value = name;
+        document.getElementById('description').value = summary;
+        document.getElementById('imageType').value = 'url'; // Choisir 'url' par défaut
+        document.getElementById('imageUrl').value = imageUrl; // Remplir le champ d'URL avec l'image du jeu
+
+        // Afficher le champ d'URL et masquer le champ de fichier
+        document.getElementById('urlInput').style.display = 'block';
+        document.getElementById('fileInput').style.display = 'none';
+
+        // Faire défiler la page vers le formulaire
+        document.querySelector('.container-form').scrollIntoView({ behavior: 'smooth' });
+    }
     </script>
 </body>
 </html>
